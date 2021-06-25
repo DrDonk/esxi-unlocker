@@ -79,4 +79,4 @@ History
 26/09/18 3.0.0 - First release
 
 
-(c) 2011-2018 Dave Parsons
+(c) 2011-2021 Dave Parsons

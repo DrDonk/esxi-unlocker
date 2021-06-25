@@ -2,7 +2,7 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2014-2018 Dave Parsons & Sam Bingner
+Copyright (c) 2014-2021 Dave Parsons & Sam Bingner
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal
@@ -342,9 +342,10 @@ def main():
     patchsmc(destvmx, True)
 
     # Patch 32-bit libvmkctl to return Apple SMC present
-    os.makedirs(joinpath(destfolder, 'lib'))
-    shutil.copy2(srclib32, destlib32)
-    patchvmkctl(destlib32)
+    if os.path.isfile(srclib32):
+        os.makedirs(joinpath(destfolder, 'lib'))
+        shutil.copy2(srclib32, destlib32)
+        patchvmkctl(destlib32)
 
     # Patch 64-bit libvmkctl to return Apple SMC present
     if os.path.isfile(srclib64):
@@ -352,27 +353,28 @@ def main():
         shutil.copy2(srclib64, destlib64)
         patchvmkctl(destlib64)
 
-    # Build the gzipped tar file custom.tgz
-    print('\nCreating custom.tgz...')
-    subprocess.call('/bin/tar czvf custom.tgz bin lib lib64', shell=True)
+    # Build the gzipped tar file macos.tgz
+    print('\nCreating macos.tgz...')
+    subprocess.call('/bin/tar czvf macos.tgz bin lib lib64', shell=True)
 
-    # Build the vmtar file custom.vmtar
-    print('\nCreating custom.vmtar...')
-    subprocess.call('/bin/vmtar -v -c custom.tgz -o custom.vmtar', shell=True)
+    # Build the vmtar file macos.vmtar
+    print('\nCreating macos.vmtar...')
+    subprocess.call('/bin/vmtar -v -c macos.tgz -o macos.vmtar', shell=True)
 
-    # Build the gzipped vmtar file custom.vgz
-    print('\nCreating custom.vgz...')
-    subprocess.call('/bin/gzip < custom.vmtar > custom.vgz', shell=True)
-    subprocess.call('/bin/vmtar -v -t < custom.vgz', shell=True)
+    # Build the gzipped vmtar file macos.vgz
+    print('\nCreating macos.vgz...')
+    subprocess.call('/bin/gzip < macos.vmtar > macos.vgz', shell=True)
+    subprocess.call('/bin/vmtar -v -t < macos.vgz', shell=True)
 
     # Load the tardisk
-    subprocess.call('vmkramdisk custom.vgz', shell=True)
+    subprocess.call('vmkramdisk macos.vgz', shell=True)
 
     # Return to script folder
     os.chdir(currdir)
 
-    # Start the hostd service
-    subprocess.call('/etc/init.d/hostd start', shell=True)
+    # Start the rhttp & hostd services
+    subprocess.call('/etc/init.d/rhttp restart', shell=True)
+    subprocess.call('/etc/init.d/hostd restart', shell=True)
 
 
 if __name__ == '__main__':

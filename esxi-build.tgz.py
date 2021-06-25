@@ -23,25 +23,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+# Note to self:
+# This is crap code used in place of a shell script
+# GNU tar and ar must be used and not BSD version or error loading the tardisk in ESXi:
+# brew install gnu-tar binutils
+
 import datetime
 import subprocess
 import sys
 
 
-if sys.version_info < (2, 7):
-    sys.stderr.write('You need Python 2.7 or later\n')
+if sys.version_info < (3, 6):
+    sys.stderr.write('You need Python 3.6 or later\n')
     sys.exit(1)
 
 # TODO: Change for a new release
-VERSION = '3.0.0'
-FILEVER = '300'
-FILENAME = 'esxi-unlocker-300.tgz'
+VERSION = '3.0.1'
+FILEVER = '301'
+FILENAME = 'build/esxi-unlocker-300.tgz'
 
-TIMESTAMP = '{:%Y%m%d%H%M.%S}'.format(datetime.datetime.now())
+NOW = datetime.datetime.now()
+TIMESTAMP = f'{NOW:%Y%m%d%H%M.%S}'
 TOUCH = 'touch -t ' + TIMESTAMP
-GTARUNLOCKER = '/usr/local/bin/gtar czvf unlocker.tgz etc'
+GTARUNLOCKER = '/usr/local/bin/gtar czvf build/unlocker.tgz etc'
 GTARDISTRIB = '/usr/local/bin/gtar czvf ' + FILENAME + \
-              ' unlocker.tgz esxi-install.sh esxi-uninstall.sh esxi-smctest.sh readme.txt'
+              ' build/unlocker.tgz esxi-install.sh esxi-uninstall.sh esxi-smctest.sh readme.txt'
 
 
 def main():
