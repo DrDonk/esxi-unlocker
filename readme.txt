@@ -1,3 +1,7 @@
+THIS PRoJECT IS CURRENTLY NOT IN ACTIVE DEVELOPMENT OR SUPPORT
+CODE IS HHERE AS AN ARCHIVE
+
+
 macOS Unlocker V3.0 for VMware ESXi
 ===================================
 
