@@ -1,27 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# coding=utf-8
+
+# SPDX-FileCopyrightText: © 2014-2021 David Parsons
+# SPDX-License-Identifier: MIT
+
 """
-The MIT License (MIT)
-
-Copyright (c) 2014-2021 Dave Parsons & Sam Bingner
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the 'Software'), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
 vSMC Header Structure
 Offset  Length  Struct Type Description
 ----------------------------------------
@@ -310,22 +293,71 @@ def patchvmkctl(name):
 
 def main():
 
+    # Stop the hostd service
+    subprocess.call('/etc/init.d/hostd stop', shell=True)
+
     # Current folder
     currdir = os.getcwd()
 
+    # Source files
+    srcvmx = '/bin/vmx'
+    srclib32 = '/lib/libvmkctl.so'
+    srclib64 = '/lib64/libvmkctl.so'
+
     # Destination files cuurently tmp but may use scratch
-    destfolder = joinpath(currdir, 'tmp')
+    basefolder = '/tmp/'
+    destfolder = joinpath(basefolder, 'unlocker')
     destvmx = joinpath(destfolder, 'bin/vmx')
-    destvmxdebug = joinpath(destfolder, 'bin/vmx-debug')
-    destvmxstats = joinpath(destfolder, 'bin/vmx-stats')
-    destlibvmkctl = joinpath(destfolder, 'lib64/libvmkctl.so')
+    destlib32 = joinpath(destfolder, 'lib/libvmkctl.so')
+    destlib64 = joinpath(destfolder, 'lib64/libvmkctl.so')
+
+    # Remove files & folder if they exist
+    if os.path.isdir(destfolder):
+        shutil.rmtree(destfolder, True)
+
+    # Create the base folder
+    os.makedirs(destfolder)
+    os.chdir(destfolder)
 
     # Patch the vmx executable
+    os.makedirs(joinpath(destfolder, 'bin'))
+    shutil.copy2(srcvmx, destvmx)
     patchsmc(destvmx, True)
-    patchsmc(destvmxdebug, True)
-    patchsmc(destvmxstats, True)
 
-    # patchvmkctl(destlibvmkctl)
+    # Patch 32-bit libvmkctl to return Apple SMC present
+    if os.path.isfile(srclib32):
+        os.makedirs(joinpath(destfolder, 'lib'))
+        shutil.copy2(srclib32, destlib32)
+        patchvmkctl(destlib32)
+
+    # Patch 64-bit libvmkctl to return Apple SMC present
+    if os.path.isfile(srclib64):
+        os.makedirs(joinpath(destfolder, 'lib64'))
+        shutil.copy2(srclib64, destlib64)
+        patchvmkctl(destlib64)
+
+    # Build the gzipped tar file macos.tgz
+    print('\nCreating macos.tgz...')
+    subprocess.call('/bin/tar czvf macos.tgz bin lib lib64', shell=True)
+
+    # Build the vmtar file macos.vmtar
+    print('\nCreating macos.vmtar...')
+    subprocess.call('/bin/vmtar -v -c macos.tgz -o macos.vmtar', shell=True)
+
+    # Build the gzipped vmtar file macos.vgz
+    print('\nCreating macos.vgz...')
+    subprocess.call('/bin/gzip < macos.vmtar > macos.vgz', shell=True)
+    subprocess.call('/bin/vmtar -v -t < macos.vgz', shell=True)
+
+    # Load the tardisk
+    subprocess.call('vmkramdisk macos.vgz', shell=True)
+
+    # Return to script folder
+    os.chdir(currdir)
+
+    # Start the rhttp & hostd services
+    subprocess.call('/etc/init.d/rhttp restart', shell=True)
+    subprocess.call('/etc/init.d/hostd restart', shell=True)
 
 
 if __name__ == '__main__':
