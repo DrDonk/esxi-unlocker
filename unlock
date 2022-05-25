@@ -1,5 +1,15 @@
-#!/bin/ash
-set -x
+#!/bin/sh
+set -e
+#set -x
+
+echo VMware ESXi Unlocker 4.2.1
+echo ==========================
+echo Copyright: Dave Parsons 2011-22
+
+# Ensure we only use unmodified commands
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+echo Installing unlocker...
 
 # Absolute path to this script
 SCRIPT=$(readlink -f "$0")
@@ -34,6 +44,9 @@ rm -fv vmx*
 
 # Do the unlocking stuff
 cd ./tmp
+python ./esx/patchsmc.py ./bin/vmx
+python ./esx/patchsmc.py ./bin/vmx-debug
+python ./esx/patchsmc.py ./bin/vmx-stats
 
 #  Compress files to TAR file
 tar cvf ../vmx.tar *
@@ -52,3 +65,5 @@ mv -fv vmx.xz.v00 vmx.v00
 
 # Copy to main bootbank (BOOTBANK1)
 #cp vmx.v00 /bootbank/vmx.v00
+
+echo Success - please now restart the server!

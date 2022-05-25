@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-# NOTE: This has been simplified for possible future port to Go
-
-# SPDX-FileCopyrightText: © 2014-2021 David Parsons & Sam Bingner
+# SPDX-FileCopyrightText: © 2014-2022 David Parsons & Sam Bingner
 # SPDX-License-Identifier: MIT
 
 """
@@ -56,6 +54,7 @@ KEY_KEY = b'YEK#'
 LKS_KEY = b'SKL+'
 OSK0_KEY = b'0KSO'
 OSK1_KEY = b'1KSO'
+KPST_KEY = b'TSPK'
 KPPW_KEY = b'WPPK'
 
 # Haiku
@@ -63,7 +62,7 @@ OSK0 = codecs.encode('bheuneqjbexolgurfrjbeqfthneqrqcy', 'rot_13').encode('UTF-8
 OSK1 = codecs.encode('rnfrqbagfgrny(p)NccyrPbzchgreVap', 'rot_13').encode('UTF-8')
 
 # Hogwarts
-KPPW = 'SpecialisRevelio'.encode('UTF-8')
+KPPW = codecs.encode('FcrpvnyvfEriryvb', 'rot_13').encode('UTF-8')
 
 # ELF Magic
 ELF_MAGIC = b'\x7fELF'
@@ -213,6 +212,9 @@ def patchsmc(name):
         # Find 'OSK1' keys
         smc0_osk1 = vmx.find(OSK1_KEY, smc0_key)
         smc1_osk1 = vmx.find(OSK1_KEY, smc1_key)
+
+        # Find 'KPST' key
+        smc1_kpst = vmx.find(KPPW_KEY, smc1_key)
 
         # Find 'KPPW' key
         smc1_kppw = vmx.find(KPPW_KEY, smc1_key)
