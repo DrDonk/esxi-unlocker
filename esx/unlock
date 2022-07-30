@@ -5,9 +5,9 @@
 set -e
 #set -x
 
-echo VMware ESXi Unlocker 4.2.1
-echo ==========================
-echo Copyright: David Parsons 2011-22
+echo "VMware ESXi Unlocker 4.0.0"
+echo "=========================="
+echo "© 2014-2022 David Parsons"
 
 # Ensure we only use unmodified commands
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin

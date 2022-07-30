@@ -2,5 +2,9 @@
 # SPDX-FileCopyrightText: © 2014-2021 David Parsons
 # SPDX-License-Identifier: MIT
 
+echo "VMware ESXi Unlocker 4.0.0"
+echo "=========================="
+echo "© 2014-2022 David Parsons"
+
 grep -il \(c\)AppleComputerInc /bin/vmx*
 #vim-cmd hostsvc/hosthardware | grep smcPresent | cut -d ',' -f 1 | sed 's/^[ \t]*//'

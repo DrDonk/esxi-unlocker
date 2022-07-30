@@ -164,8 +164,6 @@ def dumpsmc(name):
 
 
 def main():
-    print('dumpsmc')
-    print('-------')
 
     if len(sys.argv) >= 2:
         vmx_path = sys.argv[1]
@@ -181,4 +179,8 @@ def main():
 
 
 if __name__ == '__main__':
+    print('DumpSMC 4.0.0')
+    print('=============')
+    print('© 2014-2022 David Parsons\n')
+
     main()

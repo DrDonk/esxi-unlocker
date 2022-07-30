@@ -36,9 +36,6 @@ def patchvmkctl(name):
 
 
 def main():
-    print('patchvmkctl')
-    print('-----------')
-
     if len(sys.argv) >= 2:
         filename = sys.argv[1]
     else:
@@ -53,4 +50,8 @@ def main():
 
 
 if __name__ == '__main__':
+    print('PatchVMKCtl 4.0.0')
+    print('=================')
+    print('© 2014-2022 David Parsons\n')
+
     main()

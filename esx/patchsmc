@@ -319,9 +319,6 @@ def ispatched(name):
 
 
 def main():
-    print('patchsmc')
-    print('--------')
-
     if len(sys.argv) >= 2:
         filename = sys.argv[1]
     else:
@@ -336,4 +333,8 @@ def main():
 
 
 if __name__ == '__main__':
+    print('PatchSMC 4.0.0')
+    print('==============')
+    print('© 2014-2022 David Parsons\n')
+
     main()
