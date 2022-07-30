@@ -4,7 +4,7 @@ set -e
 
 echo VMware ESXi Unlocker 4.2.1
 echo ==========================
-echo Copyright: Dave Parsons 2011-22
+echo Copyright: David Parsons 2011-22
 
 # Ensure we only use unmodified commands
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -12,4 +12,4 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 echo Uninstalling unlocker...
 # Copy vmx.v00 from alt bootbank (BOOTBANK1) to main bootbank (BOOTBANK1)
 cp -v /altbootbank/vmx.v00 /bootbank/vmx.v00
-echo Success - please now restart the server!
+echo Success - please now reboot the server!
