@@ -47,9 +47,9 @@ rm -f vmx*
 
 # Do the unlocking stuff
 cd ./tmp/bin
-python ../../patchsmc.py vmx
-python ../../patchsmc.py vmx-debug
-python ../../patchsmc.py vmx-stats
+python ../../patchsmc vmx
+python ../../patchsmc vmx-debug
+python ../../patchsmc vmx-stats
 #touch .unlocked
 
 #  Compress files to TAR file
