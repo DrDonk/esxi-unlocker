@@ -7,10 +7,22 @@ set -e
 
 echo "VMware ESXi Unlocker 4.0.0"
 echo "=========================="
-echo "© 2014-2022 David Parsons"
+echo "© 2011-2022 David Parsons"
 
 # Ensure we only use unmodified commands
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+if [ $# -ne 0 ]; then
+  case "$1" in
+    -v)
+      echo "Verbose mode"
+      ;;
+    *)
+      echo "Invalid switch!"
+      exit 1
+      ;;
+  esac
+fi
+echo $1
 
 echo Installing unlocker...
 
@@ -25,50 +37,58 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 # Change to script folder for processing
 cd "$SCRIPTPATH"
 
+echo Extracting vmx.v00 contents...
 # Get the GZIP/XZ/VMTAR'd VisorFS file from main bootbank (BOOTBANK1)
-cp -fv /bootbank/vmx.v00 vmx.gz
+cp -f $1 /bootbank/vmx.v00 vmx.gz
 
 # Extract XZ file from GZIP file
-pigz -d -k vmx.gz
-mv -fv vmx vmx.xz
+pigz $1 -d -k vmx.gz
+mv $1 -f vmx vmx.xz
 
 # Extract VMTAR file from XZ file
-xz -d --single-stream < vmx.xz > vmx.vtar
+xz $1 -d --single-stream < vmx.xz > vmx.vtar
 
 # Extract TAR file from VMTAR file
-vmtar -x vmx.vtar -o vmx.tar
+vmtar -x vmx.vtar $1 -o vmx.tar
 
 # Create a tmp folder for processing the TAR disk contents and extract files
 mkdir -p ./tmp
-tar xf vmx.tar -C ./tmp
+tar x $1 -f vmx.tar -C ./tmp
 
 # Cleanup copied/extracted files
-rm -f vmx*
+rm $1 -f vmx*
 
 # Do the unlocking stuff
+echo Patching vmx files...
 cd ./tmp/bin
 python ../../patchsmc vmx
 python ../../patchsmc vmx-debug
 python ../../patchsmc vmx-stats
 #touch .unlocked
 
+echo Rebuilding vmx.v00 VMTAR file...
 #  Compress files to TAR file
 cd ..
-tar cvf ../vmx.tar *
+tar c $1 -f ../vmx.tar *
 cd ..
 
 # Create VMTAR from TAR file
-vmtar -c vmx.tar -o vmx.vtar
+vmtar -c vmx.tar $1 -o vmx.vtar 2>/dev/null
 
 # Compress VMTAR into XZ file and add signature
-xz --compress --stdout --lzma2=dict=2048KiB --check=crc32 --threads=8 vmx.vtar > vmx.xz
+xz --compress --stdout --lzma2=dict=2048KiB --check=crc32 --threads 0 --verbose vmx.vtar > vmx.xz
 cat /usr/share/weasel/s.sigblob >> vmx.xz
 
 # Compress XZ-sig to GZIP file
-pigz -9 -p 60 -n -T -k -S .v00 vmx.xz
-mv -fv vmx.xz.v00 vmx.v00
+pigz $1 -9 -p 60 -n -T -k -S .v00 vmx.xz
+mv $1 -f vmx.xz.v00 vmx.v00
 
 # Copy to main bootbank (BOOTBANK1)
-cp vmx.v00 /bootbank/vmx.v00
+echo Copying vmx.v00 to bootbank...
+cp $1 vmx.v00 /bootbank/vmx.v00
 
+# Remove the working files
+echo Cleaning up tmp files...
+rm $1 -rf ./tmp
+rm $1 -f vmx.*
 echo Success - please now reboot the server!
