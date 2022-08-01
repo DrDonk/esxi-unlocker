@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-# SPDX-FileCopyrightText: © 2014-2022 David Parsons & Sam Bingner
+# SPDX-FileCopyrightText: © 2011-2022 David Parsons & Sam Bingner
 # SPDX-License-Identifier: MIT
 
 """
@@ -188,7 +188,7 @@ def patchosk(vmx, offset, ptr, data):
 
 def patchsmc(name):
     with open(name, 'r+b') as f:
-        print('File: ' + name + '\n')
+        print('File: ' + name)
 
         # Memory map file
         vmx = mmap.mmap(f.fileno(), 0)
@@ -291,6 +291,7 @@ def patchsmc(name):
             # There should be 4 relocation records that need patching
             if j != 4:
                 print(f'ELF file RELA error count: {j}')
+        print('\n')
 
         # Tidy up
         vmx.flush()
