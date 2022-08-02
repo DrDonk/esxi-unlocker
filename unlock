@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 set -e
-#set -x
 
 echo "VMware ESXi Unlocker 4.0.0"
 echo "=========================="
@@ -16,6 +15,7 @@ if [ $# -ne 0 ]; then
   case "$1" in
     -v)
       echo "Verbose mode"
+      set -x
       ;;
     *)
       echo "Invalid switch!"
@@ -58,15 +58,15 @@ rm $1 -f vmx*
 
 # Do the unlocking stuff
 echo Patching vmx files...
-cd ./tmp/bin
-python ../../patchsmc vmx
-python ../../patchsmc vmx-debug
-python ../../patchsmc vmx-stats
-#touch .unlocked
+python ./patchsmc patch ./tmp/bin/vmx
+python ./patchsmc patch ./tmp/bin/vmx-debug
+python ./patchsmc patch ./tmp/bin/vmx-stats
 
+# Build a signed GZ/XZ/VMTAR file
 echo Rebuilding vmx.v00 VMTAR file...
+
 #  Compress files to TAR file
-cd ..
+cd ./tmp
 tar c $1 -f ../vmx.tar *
 cd ..
 

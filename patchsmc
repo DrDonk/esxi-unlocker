@@ -37,12 +37,13 @@ import os
 import struct
 import sys
 
-
 # Constants for header and key access
 HDR_PACK = '=QII'
 HDR_LENGTH = 16
 KEY_PACK = '=4sB4sB6xQ'
 KEY_LENGTH = 24
+DATA_LENGTH = 48
+ROW_LENGTH = KEY_LENGTH + DATA_LENGTH
 
 # Setup hex string for vSMC headers
 # These are the private and public key counts
@@ -63,6 +64,8 @@ OSK1 = codecs.encode('rnfrqbagfgrny(p)NccyrPbzchgreVap', 'rot_13').encode('UTF-8
 
 # Hogwarts
 KPPW = codecs.encode('FcrpvnyvfEriryvb', 'rot_13').encode('UTF-8')
+KPST = b'\x01'
+
 
 # ELF Magic
 ELF_MAGIC = b'\x7fELF'
@@ -159,6 +162,26 @@ def patchkppw(vmx, offset, data):
     return
 
 
+def patchkpst(vmx, offset, data):
+    # Get the KPST key and data
+    smc_key = getkey(vmx, offset)
+    smc_data = getdata(vmx, offset, smc_key)
+    key = smc_key[0][::-1].decode('UTF-8')
+    print(f'{key} Key Before:')
+    printkey(offset, smc_key, smc_data)
+
+    # Set the data value
+    setdata(vmx, offset, data)
+
+    # Get patched KPPW key and data
+    smc_key = getkey(vmx, offset)
+    smc_data = getdata(vmx, offset, smc_key)
+    print(f'{key} Key After:')
+    printkey(offset, smc_key, smc_data)
+
+    return
+
+
 def patchosk(vmx, offset, ptr, data):
     # Get the OSK key and data
     smc_key = getkey(vmx, offset)
@@ -187,9 +210,7 @@ def patchosk(vmx, offset, ptr, data):
 
 
 def patchsmc(name):
-    with open(name, 'r+b') as f:
-        print('File: ' + name)
-
+    with open(name, 'rb+') as f:
         # Memory map file
         vmx = mmap.mmap(f.fileno(), 0)
 
@@ -214,7 +235,7 @@ def patchsmc(name):
         smc1_osk1 = vmx.find(OSK1_KEY, smc1_key)
 
         # Find 'KPST' key
-        smc1_kpst = vmx.find(KPPW_KEY, smc1_key)
+        smc1_kpst = vmx.find(KPST_KEY, smc1_key)
 
         # Find 'KPPW' key
         smc1_kppw = vmx.find(KPPW_KEY, smc1_key)
@@ -223,8 +244,9 @@ def patchsmc(name):
         osk0 = getdata(vmx, smc1_osk0, getkey(vmx, smc1_osk0))
         osk1 = getdata(vmx, smc1_osk1, getkey(vmx, smc1_osk1))
         kppw = getdata(vmx, smc1_kppw, getkey(vmx, smc1_kppw))
+        kpst = getdata(vmx, smc1_kpst, getkey(vmx, smc1_kpst))
 
-        if osk0 == OSK0 and osk1 == OSK1 and kppw == KPPW:
+        if osk0 == OSK0 and osk1 == OSK1 and kppw == KPPW and kpst == KPST:
             print(f'File {name} is already patched')
             return
 
@@ -257,6 +279,9 @@ def patchsmc(name):
 
         # Patch OSK1 key & get the output for ELF patching
         smc_osk_ptr = patchosk(vmx, smc1_osk1, smc_default_ptr, OSK1)
+
+        # Patch KPST key as a marker
+        patchkpst(vmx, smc1_kpst, KPST)
 
         # Patch KPPW key as a marker
         patchkppw(vmx, smc1_kppw, KPPW)
@@ -300,42 +325,146 @@ def patchsmc(name):
         f.close()
 
 
-def ispatched(name):
-    with open(name, 'r+b') as f:
-        print('File: ' + name + '\n')
+def ispatched(vmx):
+    # Find '#KEY' keys
+    smc1_key = vmx.rfind(KEY_KEY)
 
+    # Find 'OSK0' keys
+    smc1_osk0 = vmx.find(OSK0_KEY, smc1_key)
+
+    # Find 'OSK1' keys
+    smc1_osk1 = vmx.find(OSK1_KEY, smc1_key)
+
+    # Find 'KPST' key
+    smc1_kpst = vmx.find(KPST_KEY, smc1_key)
+
+    # Find 'KPPW' key
+    smc1_kppw = vmx.find(KPPW_KEY, smc1_key)
+
+    # Check to see if we have already patched the vSMC in the file
+    osk0 = getdata(vmx, smc1_osk0, getkey(vmx, smc1_osk0))
+    osk1 = getdata(vmx, smc1_osk1, getkey(vmx, smc1_osk1))
+    kppw = getdata(vmx, smc1_kppw, getkey(vmx, smc1_kppw))
+    kpst = getdata(vmx, smc1_kpst, getkey(vmx, smc1_kpst))
+
+    # print(f'{OSK0} {OSK1} {KPST} {KPPW}')
+    # print(f'{osk0} {osk1} {kpst} {kppw}')
+    if osk0 == OSK0 and osk1 == OSK1 and kppw == KPPW and kpst == KPST:
+        flag = True
+    else:
+        flag = False
+    return flag
+
+
+def dumpkeys(vmx, offset, count):
+    print('Offset     Name Len Type Flag FuncPtr    Data')
+    print('-------    ---- --- ---- ---- -------    ----')
+
+    for i in range(count):
+        # Read key into struct str and data byte str
+        smc_key = getkey(vmx, offset)
+        smc_data = getdata(vmx, offset, smc_key)
+
+        # Dump entry
+        printkey(offset, smc_key, smc_data)
+        offset = offset + ROW_LENGTH
+
+    return
+
+
+def dumpsmc(name):
+    with open(name, 'rb') as f:
         # Memory map file
-        vmx = mmap.mmap(f.fileno(), 0)
+        vmx = mmap.mmap(f.fileno(), 0, flags=mmap.MAP_PRIVATE, prot=mmap.PROT_READ)
 
-        # Is SpecialisRevelio present?
-        if vmx.find(KPPW) == -1:
-            flag = True
-        else:
-            flag = False
+        # Find the vSMC headers
+        smc0_header = vmx.find(SMC_HEADER_V0) - 8
+        smc1_header = vmx.find(SMC_HEADER_V1) - 8
+
+        # Find '#KEY' keys
+        smc0_key = vmx.find(KEY_KEY, smc0_header)
+        smc1_key = vmx.find(KEY_KEY, smc1_header)
+
+        # Dump first vSMC table
+        print('\nappleSMCTableV0 (smc.version = "0")')
+        hdr = gethdr(vmx, smc0_header)
+        printhdr(smc0_header, hdr)
+        dumpkeys(vmx, smc0_key, hdr[1])
+
+        # Dump second vSMC table
+        print('\nappleSMCTableV1 (smc.version = "1")')
+        hdr = gethdr(vmx, smc1_header)
+        printhdr(smc1_header, hdr)
+        dumpkeys(vmx, smc1_key, hdr[1])
+
+        # Tidy up
+        # vmx.close()
+        f.close()
+
+    return
+
+
+def checksmc(name):
+    with open(name, 'rb') as f:
+        # Memory map file
+        vmx = mmap.mmap(f.fileno(), 0, flags=mmap.MAP_PRIVATE, prot=mmap.PROT_READ)
+        flag = ispatched(vmx)
+        print(f'Patch Status: {flag}')
 
     # Tidy up
     vmx.close()
     f.close()
-    return flag
 
-
-def main():
-    if len(sys.argv) >= 2:
-        filename = sys.argv[1]
-    else:
-        print('Please pass file name!')
-        return
-
-    if os.path.isfile(filename):
-        patchsmc(filename)
-    else:
-        print('Cannot find file ' + filename)
     return
 
 
-if __name__ == '__main__':
+def print_usage():
+    print('Usage:')
+    print(f'{sys.argv[0]} patch|dump|check <vmx filename>')
+    print('\nFirst option is command to perform:')
+    print(f'  patch - patch the vSMC table in vmx executable')
+    print(f'  check - check the vSMC table in vmx executable')
+    print(f'  dump  - dump the vSMC table in vmx executable')
+    print(f'\nSecond option is the filename of executable:')
+    print(f'  <vmx filename> - the vmx executable to patch (vmx/vmx-debug/vmx-stats)')
+
+    sys.exit(1)
+
+
+def main():
     print('PatchSMC 4.0.0')
     print('==============')
-    print('© 2014-2022 David Parsons\n')
+    print('© 2014-2022 David Parsons')
 
+    # Function pointer
+    f = None
+
+    # Parse args and call command
+    if len(sys.argv) >= 3:
+        if sys.argv[1] == 'check':
+            f = checksmc
+        elif sys.argv[1] == 'dump':
+            f = dumpsmc
+        elif sys.argv[1] == 'patch':
+            f = patchsmc
+        elif sys.argv[1] == '-h':
+            print_usage()
+        else:
+            print(f'Error: Incorrect command {sys.argv[1]} passed.')
+            print_usage()
+        filename = sys.argv[2]
+        if os.path.isfile(filename):
+            print(f'File: {filename}')
+            f(filename)
+        else:
+            print(f'Error: Cannot find file {filename}')
+            sys.exit(1)
+        return
+    else:
+        print_usage()
+        return
+
+
+if __name__ == '__main__':
     main()
+    sys.exit(0)
