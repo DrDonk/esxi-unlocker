@@ -19,7 +19,7 @@ if sys.version_info < (3, 6):
 
 def patchvmkctl(name):
     # Patch file
-    print('smcPresent Patching: ' + name)
+    print(f'smcPresent Patching: {name}')
     f = open(name, 'r+b')
 
     # Read file into string variable
@@ -31,7 +31,7 @@ def patchvmkctl(name):
     # Tidy up
     f.flush()
     f.close()
-    print('smcPresent Patched: ' + name)
+    print(f'smcPresent Patched: {name}')
     return
 
 
@@ -53,5 +53,5 @@ if __name__ == '__main__':
     print('PatchVMKCtl 4.0.0')
     print('=================')
     print('© 2014-2022 David Parsons\n')
-
     main()
+    print('\n')
