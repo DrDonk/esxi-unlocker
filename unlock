@@ -35,23 +35,11 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 # Change to script folder for processing
 cd "$SCRIPTPATH"
 
-echo Extracting vmx.v00 contents...
-# Get the GZIP/XZ/VMTAR'd VisorFS file from main bootbank (BOOTBANK1)
-cp -f $1 /bootbank/vmx.v00 vmx.gz
-
-# Extract XZ file from GZIP file
-pigz $1 -d -k vmx.gz
-mv $1 -f vmx vmx.xz
-
-# Extract VMTAR file from XZ file
-xz $1 -d --single-stream < vmx.xz > vmx.vtar
-
-# Extract TAR file from VMTAR file
-vmtar -x vmx.vtar $1 -o vmx.tar
-
-# Create a tmp folder for processing the TAR disk contents and extract files
-mkdir -p ./tmp
-tar x $1 -f vmx.tar -C ./tmp
+# Create a tmp folder for processing and copy files
+mkdir -p ./tmp/bin
+cp $1 /bin/vmx ./tmp/bin
+cp $1 /bin/vmx-debug ./tmp/bin
+cp $1 /bin/vmx-stats ./tmp/bin
 
 # Cleanup copied/extracted files
 rm $1 -f vmx*
@@ -63,27 +51,27 @@ python ./patchsmc patch ./tmp/bin/vmx-debug
 python ./patchsmc patch ./tmp/bin/vmx-stats
 
 # Build a signed GZ/XZ/VMTAR file
-echo Rebuilding vmx.v00 VMTAR file...
+echo Building macos.v00 VMTAR file...
 
 #  Compress files to TAR file
 cd ./tmp
-tar c $1 -f ../vmx.tar *
+tar c $1 -f ../macos.tar *
 cd ..
 
 # Create VMTAR from TAR file
-vmtar -c vmx.tar $1 -o vmx.vtar 2>/dev/null
+vmtar -c macos.tar $1 -o macos.vtar 2>/dev/null
 
 # Compress VMTAR into XZ file and add signature
-xz --compress --stdout --lzma2=dict=2048KiB --check=crc32 --threads 0 --verbose vmx.vtar > vmx.xz
-cat /usr/share/weasel/s.sigblob >> vmx.xz
+xz --compress --stdout --lzma2=dict=2048KiB --check=crc32 --threads 0 --verbose macos.vtar > macos.xz
+cat /usr/share/weasel/s.sigblob >> macos.xz
 
 # Compress XZ-sig to GZIP file
-pigz $1 -9 -p 60 -n -T -k -S .v00 vmx.xz
-mv $1 -f vmx.xz.v00 vmx.v00
+pigz $1 -9 -p 60 -n -T -k -S .v00 macos.xz
+mv $1 -f macos.xz.v00 macos.v00
 
 # Copy to main bootbank (BOOTBANK1)
-echo Copying vmx.v00 to bootbank...
-cp $1 vmx.v00 /bootbank/vmx.v00
+echo Copying macos.v00 to bootbank...
+BootModuleConfig.sh --add=macos.v00 --verbose
 
 # Remove the working files
 echo Cleaning up tmp files...

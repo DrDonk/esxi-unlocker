@@ -13,6 +13,5 @@ echo "© 2011-2022 David Parsons"
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 echo Uninstalling unlocker...
-# Copy vmx.v00 from alt bootbank (BOOTBANK1) to main bootbank (BOOTBANK1)
-cp -v /altbootbank/vmx.v00 /bootbank/vmx.v00
+BootModuleConfig.sh --remove=macos.v00 --verbose
 echo Success - please now reboot the server!
