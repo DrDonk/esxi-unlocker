@@ -2,23 +2,23 @@
 # SPDX-FileCopyrightText: © 2014-2021 David Parsons
 # SPDX-License-Identifier: MIT
 
-set -e
+#set -e
 
-echo "VMware ESXi Unlocker 4.0.0"
-echo "=========================="
-echo "© 2011-2022 David Parsons"
-echo Installing unlocker...
+printf "VMware ESXi Unlocker 4.0.0\n"
+printf "==========================\n"
+printf "© 2011-2022 David Parsons\n"
+printf "\nInstalling unlocker...\n"
 
 # Ensure we only use unmodified commands
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 if [ $# -ne 0 ]; then
   case "$1" in
     -v)
-      echo "Verbose mode"
+      printf "Verbose mode"
       set -x
       ;;
     *)
-      echo "Invalid switch!"
+      printf "Invalid switch!"
       exit 1
       ;;
   esac
@@ -35,46 +35,51 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 # Change to script folder for processing
 cd "$SCRIPTPATH"
 
+# Cleanup any previous runs
+rm -rf ./tmp 2>/dev/null
+rm -f -f apple.* 2>/dev/null
+
 # Create a tmp folder for processing and copy files
 mkdir -p ./tmp/bin
 cp $1 /bin/vmx ./tmp/bin
 cp $1 /bin/vmx-debug ./tmp/bin
 cp $1 /bin/vmx-stats ./tmp/bin
 
-# Cleanup copied/extracted files
-rm $1 -f vmx*
+mkdir -p ./tmp/lib64
+cp $1 /lib64/libvmkctl.so ./tmp/lib64
 
 # Do the unlocking stuff
-echo Patching vmx files...
 python ./patchsmc patch ./tmp/bin/vmx
 python ./patchsmc patch ./tmp/bin/vmx-debug
 python ./patchsmc patch ./tmp/bin/vmx-stats
 
+python ./patchvmkctl ./tmp/lib64/libvmkctl.so
+
 # Build a signed GZ/XZ/VMTAR file
-echo Building macos.v00 VMTAR file...
+printf "Building apple.v00 VMTAR file...\n"
 
 #  Compress files to TAR file
 cd ./tmp
-tar c $1 -f ../macos.tar *
+tar c $1 -f ../apple.tar *
 cd ..
 
 # Create VMTAR from TAR file
-vmtar -c macos.tar $1 -o macos.vtar 2>/dev/null
+vmtar -c apple.tar $1 -o apple.vtar 2>/dev/null
 
 # Compress VMTAR into XZ file and add signature
-xz --compress --stdout --lzma2=dict=2048KiB --check=crc32 --threads 0 --verbose macos.vtar > macos.xz
-cat /usr/share/weasel/s.sigblob >> macos.xz
+xz --compress --stdout --lzma2=dict=2048KiB --check=crc32 --threads 0 --verbose apple.vtar > apple.xz
+cat /usr/share/weasel/s.sigblob >> apple.xz
 
 # Compress XZ-sig to GZIP file
-pigz $1 -9 -p 60 -n -T -k -S .v00 macos.xz
-mv $1 -f macos.xz.v00 macos.v00
+pigz $1 -9 -p 60 -n -T -k -S .v00 apple.xz
+mv $1 -f apple.xz.v00 apple.v00
 
 # Copy to main bootbank (BOOTBANK1)
-echo Copying macos.v00 to bootbank...
-BootModuleConfig.sh --add=macos.v00 --verbose
+printf "Copying apple.v00 to bootbank...\n"
+BootModuleConfig.sh --add=apple.v00 --verbose
 
 # Remove the working files
-echo Cleaning up tmp files...
+printf "Cleaning up tmp files...\n"
 rm $1 -rf ./tmp
-rm $1 -f vmx.*
-echo Success - please now reboot the server!
+rm $1 -f apple.*
+printf "\nSuccess - please now reboot the server!\n"
