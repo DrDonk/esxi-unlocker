@@ -4,7 +4,7 @@
 
 #set -e
 
-printf "VMware ESXi Unlocker 4.0.0\n"
+printf "VMware ESXi Unlocker 4.0.2\n"
 printf "==========================\n"
 printf "© 2011-2022 David Parsons\n"
 printf "\nInstalling unlocker...\n"
@@ -45,15 +45,10 @@ cp $1 /bin/vmx ./tmp/bin
 cp $1 /bin/vmx-debug ./tmp/bin
 cp $1 /bin/vmx-stats ./tmp/bin
 
-mkdir -p ./tmp/lib64
-cp $1 /lib64/libvmkctl.so ./tmp/lib64
-
 # Do the unlocking stuff
 python ./patchsmc patch ./tmp/bin/vmx
 python ./patchsmc patch ./tmp/bin/vmx-debug
 python ./patchsmc patch ./tmp/bin/vmx-stats
-
-python ./patchvmkctl ./tmp/lib64/libvmkctl.so
 
 # Build a signed GZ/XZ/VMTAR file
 printf "Building apple.v00 VMTAR file...\n"
@@ -66,20 +61,18 @@ cd ..
 # Create VMTAR from TAR file
 vmtar -c apple.tar $1 -o apple.vtar 2>/dev/null
 
-# Compress VMTAR into XZ file and add signature
-xz --compress --stdout --lzma2=dict=2048KiB --check=crc32 --threads 0 --verbose apple.vtar > apple.xz
-cat /usr/share/weasel/s.sigblob >> apple.xz
-
-# Compress XZ-sig to GZIP file
-pigz $1 -9 -p 60 -n -T -k -S .v00 apple.xz
-mv $1 -f apple.xz.v00 apple.v00
-
-# Copy to main bootbank (BOOTBANK1)
-printf "Copying apple.v00 to bootbank...\n"
-BootModuleConfig.sh --add=apple.v00 --verbose
+# Compress VMTAR to GZIP file
+pigz $1 -9 -p 60 -n -T -k -S .v00 apple.vtar
+mv $1 -f apple.vtar.v00 apple.v00
 
 # Remove the working files
 printf "Cleaning up tmp files...\n"
 rm $1 -rf ./tmp
-rm $1 -f apple.*
-printf "\nSuccess - please now reboot the server!\n"
+rm $1 -f apple.tar
+rm $1 -f apple.vtar
+
+# Load the new VTAR file
+printf "Loading Apple support...\n"
+vmkramdisk apple.v00
+
+printf "\nSuccess\n"
