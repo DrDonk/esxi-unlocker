@@ -76,7 +76,7 @@ printf "Loading Apple support...\n"
 vmkramdisk apple.v00
 
 printf "Checking VMTAR loaded...\n"
-esxcli system visorfs tardisk list | grep apple.v00
+esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
 
 if [[ $? == 0 ]]
 then

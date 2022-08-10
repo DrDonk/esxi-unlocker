@@ -5,7 +5,7 @@
 #set -e
 #set -x
 
-printf "VMware ESXi Unlocker 4.0.0\n"
+printf "VMware ESXi Unlocker 4.0.2\n"
 printf "==========================\n"
 printf "© 2011-2022 David Parsons\n"
 printf "\nChecking unlocker...\n"
@@ -14,7 +14,7 @@ printf "\nChecking unlocker...\n"
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 printf "Checking VMTAR loaded...\n"
-esxcli system visorfs tardisk list | grep apple.v00
+esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
 
 if [[ $? == 0 ]]
 then
