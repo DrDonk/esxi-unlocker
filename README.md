@@ -1,3 +1,5 @@
+# This is currently being developed and not ready for use.
+
 # macOS Unlocker V4 for VMware ESXi
 
 ## 1. Introduction
