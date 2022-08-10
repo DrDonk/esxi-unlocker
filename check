@@ -1,5 +1,5 @@
 #!/bin/sh
-# SPDX-FileCopyrightText: © 2014-2021 David Parsons
+# SPDX-FileCopyrightText: © 2014-2022 David Parsons
 # SPDX-License-Identifier: MIT
 
 #set -e
@@ -31,6 +31,3 @@ then
 else
   printf "vmx not patched\n"
 fi
-
-printf "Checking vmkctl smcPresent status...\n"
-vim-cmd hostsvc/hosthardware | grep smcPresent | cut -d ',' -f 1 | sed 's/^[ \t]*//'
