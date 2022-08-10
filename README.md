@@ -32,7 +32,7 @@ The code is written in Python and has no pre-requisites and should run directly 
 * Unload the archive to a folder on the ESXi server and extract the files
 * Navigate to the folder with the extracted files
 
-You will then need to run one of the follwoing commands to patch or unpatch the ESXi software.
+You will then need to run one of the following commands to patch or unpatch the ESXi software.
 
 * unlock - apply patches to VMware
 * relock - remove patches from VMware
