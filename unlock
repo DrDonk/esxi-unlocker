@@ -75,4 +75,12 @@ rm $1 -f apple.vtar
 printf "Loading Apple support...\n"
 vmkramdisk apple.v00
 
-printf "\nSuccess\n"
+printf "Checking VMTAR loaded...\n"
+esxcli system visorfs tardisk list | grep apple.v00
+
+if [[ $? == 0 ]]
+then
+  printf "Success apple.v00 loaded\n"
+else
+  printf "Failure apple.v00 not loaded\n"
+fi
