@@ -25,13 +25,15 @@ The Unlocker cannot:
 or any other features that are not already in the VMware compiled code. 
 
 ## 2. Running the patcher
+
+#### The ESXi unlocker will need to be run each time the ESXi Server is restarted or upgraded. 
+#### It is also best to switch ESXi to Maintanence mode or make sure you do not have any VMs running.
+
 The code is written in Python and has no pre-requisites and should run directly from the release zip download.
 
 * Download a binary release from https://github.com/DrDonk/esxi-unlocker/releases
 * Unload the archive to a folder on the ESXi server and extract the files
 * Navigate to the folder with the extracted files
-
-### The ESXi unlocker will need to be run each time the ESXi Server is restarted or upgraded.
 
 You will then need to run one of the following commands to patch or unpatch the ESXi software.
 
