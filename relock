@@ -1,0 +1,15 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: © 2014-2021 David Parsons
+# SPDX-License-Identifier: MIT
+
+#set -e
+set -x
+
+printf "VMware ESXi Unlocker 4.0.2\n"
+printf "==========================\n"
+printf "© 2011-2022 David Parsons\n"
+
+# Ensure we only use unmodified commands
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+printf "\nReboot the ESXi server to uninstall unlocker\n"
