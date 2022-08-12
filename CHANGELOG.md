@@ -2,7 +2,12 @@
 
 All dates are UK format.
 
-## 26/01/22 4.1.1
+## 12/08/22 4.0.2
+_drdonk:_
+* Modified VMTAR format from PSIGNED-XZ to GZIP
+* Commands are now required to be run each boot of ESXi to avoid possible "Purple Screens of Death" (PSOD).
+
+## 26/01/22 4.0.1
 _drdonk:_
 * Fix missing +x bit on checksmc, dumpsmc and relock
 
