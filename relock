@@ -8,4 +8,12 @@
 printf "VMware ESXi Unlocker 4.0.2\n"
 printf "==========================\n"
 printf "© 2011-2022 David Parsons\n"
-printf "\nReboot the ESXi server to uninstall unlocker\n"
+read -r -p "Reboot the ESXi server to uninstall unlocker (y/N)? " response
+case "$response" in
+    [yY])
+        printf "Rebooting the ESXi Server\n"
+        reboot
+        ;;
+    *)
+        ;;
+esac
