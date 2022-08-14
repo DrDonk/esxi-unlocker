@@ -32,7 +32,7 @@ or any other features that are not already in the VMware compiled code.
 The code is written in Python and has no pre-requisites and should run directly from the release zip download.
 
 * Download a binary release from https://github.com/DrDonk/esxi-unlocker/releases
-* Unload the archive to a folder on the ESXi server and extract the files
+* Unload the archive to a folder on the ESXi server datastore and extract the files
 * Navigate to the folder with the extracted files
 
 You will then need to run one of the following commands to patch or unpatch the ESXi software.
