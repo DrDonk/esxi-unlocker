@@ -1,5 +1,21 @@
 # This is currently being developed and not ready for use.
 
+---
+## Important News
+
+VMware will stop supporting new macOS versions as guests starting with Fusion 13 and the next version of ESXi.
+
+This is documented at the VMware KB for Fusion:
+https://kb.vmware.com/s/article/88697
+
+And for ESXi:
+https://kb.vmware.com/s/article/88698
+
+This will likely impact Workstation Pro/Player as well. Currently the exact details of what make change are not clear, but
+it is safe to say we should look for alternative approaches to the unlocker.
+
+---
+
 # macOS Unlocker V4 for VMware ESXi
 
 ## 1. Introduction
