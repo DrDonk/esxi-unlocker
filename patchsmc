@@ -239,9 +239,6 @@ def patchsmc(name):
         # Find 'KPPW' key
         smc1_kppw = vmx_bytes.find(KPPW_KEY, smc1_key)
 
-        # Free bytes from mem
-        del vmx_bytes
-
         # Check to see if we have already patched the vSMC in the file
         osk0 = getdata(vmx, smc1_osk0, getkey(vmx, smc1_osk0))
         osk1 = getdata(vmx, smc1_osk1, getkey(vmx, smc1_osk1))
