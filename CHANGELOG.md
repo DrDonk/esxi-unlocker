@@ -2,6 +2,11 @@
 
 All dates are UK format.
 
+## 15/09/22 4.0.3
+Thanks to an _anonymous_ tester.
+* Revert to binary file read/writes in patchsmc instead of using mmap, which caused silent errors during the patching 
+process leading to failed patches.
+
 ## 12/08/22 4.0.2
 Thanks to _lucaskamp_ for testing.
 
