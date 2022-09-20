@@ -1,0 +1,33 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: © 2014-2022 David Parsons
+# SPDX-License-Identifier: MIT
+
+#set -e
+#set -x
+
+printf "VMware ESXi Unlocker 4.0.3\n"
+printf "==========================\n"
+printf "© 2011-2022 David Parsons\n"
+printf "\nChecking unlocker...\n"
+
+# Ensure we only use unmodified commands
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+printf "Checking VMTAR loaded...\n"
+esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
+
+if [[ $? == 0 ]]
+then
+  printf "apple.v00 loaded\n"
+else
+  printf "apple.v00 not loaded\n"
+fi
+
+printf "Checking vmx vSMC status...\n"
+grep -il \(c\)AppleComputerInc /bin/vmx*
+if [[ $? == 0 ]]
+then
+  printf "vmx patched\n"
+else
+  printf "vmx not patched\n"
+fi

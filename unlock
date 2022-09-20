@@ -1,0 +1,89 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: © 2011-2022 David Parsons
+# SPDX-License-Identifier: MIT
+
+#set -e
+
+printf "VMware ESXi Unlocker 4.0.3\n"
+printf "==========================\n"
+printf "© 2011-2022 David Parsons\n"
+printf "\nInstalling unlocker...\n"
+
+# Ensure we only use unmodified commands
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+if [ $# -ne 0 ]; then
+  case "$1" in
+    -v)
+      printf "Verbose mode"
+      set -x
+      ;;
+    *)
+      printf "Invalid switch!"
+      exit 1
+      ;;
+  esac
+fi
+
+# Absolute path to this script
+SCRIPT=$(readlink -f "$0")
+#echo "$SCRIPT"
+
+# Absolute folder to this script
+SCRIPTPATH=$(dirname "$SCRIPT")
+#echo "$SCRIPTPATH"
+
+# Change to script folder for processing
+cd "$SCRIPTPATH"
+
+# Cleanup any previous runs
+rm -rf ./tmp 2>/dev/null
+rm -f -f apple.* 2>/dev/null
+
+# Create a tmp folder for processing and copy files
+mkdir -p ./tmp/bin
+cp $1 /bin/vmx ./tmp/bin
+cp $1 /bin/vmx-debug ./tmp/bin
+cp $1 /bin/vmx-stats ./tmp/bin
+
+# Do the unlocking stuff
+python ./patchsmc patch ./tmp/bin/vmx
+python ./patchsmc patch ./tmp/bin/vmx-debug
+python ./patchsmc patch ./tmp/bin/vmx-stats
+
+# Ensure vmx files are 4555/-r-sr-xr-x
+chmod 4555 ./tmp/bin/*
+
+# Build a signed GZ/XZ/VMTAR file
+printf "Building apple.v00 VMTAR file...\n"
+
+#  Compress files to TAR file
+cd ./tmp
+tar c $1 -f ../apple.tar *
+cd ..
+
+# Create VMTAR from TAR file
+vmtar -c apple.tar $1 -o apple.vtar 2>/dev/null
+
+# Compress VMTAR to GZIP file
+pigz $1 -f -9 -n -T -k -S .v00 apple.vtar
+mv $1 -f apple.vtar.v00 apple.v00
+
+# Remove the working files
+printf "Cleaning up tmp files...\n"
+rm $1 -rf ./tmp
+rm $1 -f apple.tar
+rm $1 -f apple.vtar
+
+# Load the new VTAR file
+printf "Loading Apple support...\n"
+vmkramdisk apple.v00
+
+printf "Checking VMTAR loaded...\n"
+esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
+
+if [[ $? == 0 ]]
+then
+  printf "Success apple.v00 loaded\n"
+else
+  printf "Failure apple.v00 not loaded\n"
+fi

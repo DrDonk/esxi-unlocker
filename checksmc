@@ -1,0 +1,4 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: © 2014-2022 David Parsons
+# SPDX-License-Identifier: MIT
+python3 patchsmc check $1

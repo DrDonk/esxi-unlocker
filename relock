@@ -1,0 +1,19 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: © 2011-2022 David Parsons
+# SPDX-License-Identifier: MIT
+
+#set -e
+#set -x
+
+printf "VMware ESXi Unlocker 4.0.3\n"
+printf "==========================\n"
+printf "© 2011-2022 David Parsons\n"
+read -r -p "Reboot the ESXi server to uninstall unlocker (y/N)? " response
+case "$response" in
+    [yY])
+        printf "Rebooting the ESXi Server\n"
+        reboot
+        ;;
+    *)
+        ;;
+esac
