@@ -50,6 +50,9 @@ python ./patchsmc patch ./tmp/bin/vmx
 python ./patchsmc patch ./tmp/bin/vmx-debug
 python ./patchsmc patch ./tmp/bin/vmx-stats
 
+# Ensure vmx files are 4555/-r-sr-xr-x
+chmod 4555 ./tmp/bin/*
+
 # Build a signed GZ/XZ/VMTAR file
 printf "Building apple.v00 VMTAR file...\n"
 
@@ -62,7 +65,7 @@ cd ..
 vmtar -c apple.tar $1 -o apple.vtar 2>/dev/null
 
 # Compress VMTAR to GZIP file
-pigz $1 -9 -p 60 -n -T -k -S .v00 apple.vtar
+pigz $1 -f -9 -n -T -k -S .v00 apple.vtar
 mv $1 -f apple.vtar.v00 apple.v00
 
 # Remove the working files
