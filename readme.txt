@@ -1,3 +1,5 @@
+CODE ROLLED BACK to 3.0.0 DO NOT USE!
+
 macOS Unlocker V3.0 for VMware ESXi
 ===================================
 
