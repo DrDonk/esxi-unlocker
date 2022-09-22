@@ -210,7 +210,7 @@ def patchosk(vmx, offset, ptr, data):
 
 def patchsmc(name):
     with open(name, 'rb+') as vmx:
-        # Memory map file
+        # Load vmx file
         vmx_bytes = vmx.read()
 
         # Find the vSMC headers
@@ -313,11 +313,12 @@ def patchsmc(name):
                     break
 
             # There should be 4 relocation records that need patching
-            if j != 4:
+            if j != 8:
                 print(f'ELF file RELA error count: {j}')
         print('\n')
 
         # Tidy up
+        del vmx_bytes
         vmx.flush()
         vmx.close()
 
