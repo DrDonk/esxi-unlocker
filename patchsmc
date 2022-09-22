@@ -172,7 +172,7 @@ def patchkpst(vmx, offset, data):
     # Set the data value
     setdata(vmx, offset, data)
 
-    # Get patched KPPW key and data
+    # Get patched KPST key and data
     smc_key = getkey(vmx, offset)
     smc_data = getdata(vmx, offset, smc_key)
     print(f'{key} Key After:')
