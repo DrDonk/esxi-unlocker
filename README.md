@@ -1,5 +1,3 @@
-# This is currently being developed and not ready for use.
-
 ---
 ## Important News
 
