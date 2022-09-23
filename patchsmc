@@ -292,29 +292,19 @@ def patchsmc(name):
             # Find matching RELA record in .rela.dyn in ELF files
             print(f'\nModifying ELF RELA records from 0x{smc_osk_ptr:08x} -> 0x{smc_default_ptr:08x}')
 
-            # Start at offset 0 and work thru file counting patches
-            i = 0
-            j = 0
-
             # Repack ints to bytes for find
             packed_old_ptr = struct.pack('=Q', smc_osk_ptr)
             packed_new_ptr = struct.pack('=Q', smc_default_ptr)
 
-            # Loop while lower than SMC V0 #KEY offset
-            while True:
-                i = vmx_bytes.find(packed_old_ptr, i)
-                if i != -1:
-                    print(f'Relocation modified at: 0x{i:08x}')
-                    vmx.seek(i)
-                    vmx.write(packed_new_ptr)
-                    i += 1
-                    j += 1
-                else:
-                    break
+            # Find first 4 smc_osk_ptr from RELA
+            offset = 0
+            for i in range(0, 4):
+                offset = vmx_bytes.find(packed_old_ptr, offset)
+                print(f'Relocation modified at: 0x{offset:08x}')
+                vmx.seek(offset)
+                vmx.write(packed_new_ptr)
+                offset += 1
 
-            # There should be 4 relocation records that need patching
-            if j != 8:
-                print(f'ELF file RELA error count: {j}')
         print('\n')
 
         # Tidy up
