@@ -75,14 +75,15 @@ if sys.version_info < (3, 6):
 
 
 def bytetohex(data):
-    return ''.join('{:02X} '.format(c) for c in data)
+    return ''.join('{:02X}'.format(c) for c in data)
 
 
 def printhdr(offset, hdr):
-    print(f'File Offset : 0x{offset:08x}')
-    print(f'Keys Offset : 0x{hdr[0]:08x}')
-    print(f'Private Keys: 0x{hdr[1]:04x}/{hdr[1]}')
-    print(f'Public Keys : 0x{hdr[2]:04x}/{hdr[2]}')
+    print(f'File Offset  : 0x{offset:08x}')
+    print(f'Keys Offset  : 0x{hdr[0]:08x}')
+    print(f'Private Key #: 0x{hdr[1]:04x}/{hdr[1]:04d}')
+    print(f'Public Keys #: 0x{hdr[2]:04x}/{hdr[2]:04d}')
+    print()
     return
 
 
@@ -314,6 +315,7 @@ def patchsmc(name):
 
 
 def dumpkeys(vmx, offset, count):
+    print(f'Table Offset : 0x{offset:08x}')
     print('Offset     Name Len Type Flag FuncPtr    Data')
     print('-------    ---- --- ---- ---- -------    ----')
 
@@ -323,7 +325,7 @@ def dumpkeys(vmx, offset, count):
         smc_data = getdata(vmx, offset, smc_key)
 
         # Dump entry
-        printkey(offset, smc_key, smc_data)
+        printkey2(offset, smc_key, smc_data)
         offset = offset + ROW_LENGTH
 
     return
@@ -346,10 +348,10 @@ def dumpsmc(name):
         del vmx_bytes
 
         # Dump first vSMC table
-        print('\nappleSMCTableV0 (smc.version = "0")')
-        hdr = gethdr(vmx, smc0_header)
-        printhdr(smc0_header, hdr)
-        dumpkeys(vmx, smc0_key, hdr[1])
+        # print('\nappleSMCTableV0 (smc.version = "0")')
+        # hdr = gethdr(vmx, smc0_header)
+        # printhdr(smc0_header, hdr)
+        # dumpkeys(vmx, smc0_key, hdr[1])
 
         # Dump second vSMC table
         print('\nappleSMCTableV1 (smc.version = "1")')
@@ -439,7 +441,7 @@ def main():
             print_usage()
         filename = sys.argv[2]
         if os.path.isfile(filename):
-            print(f'File: {filename}')
+            print(f'Filename: {filename}')
             f(filename)
         else:
             print(f'Error: Cannot find file {filename}')
@@ -454,5 +456,6 @@ if __name__ == '__main__':
     print('PatchSMC 4.0.2')
     print('==============')
     print('© 2014-2022 David Parsons')
+    print()
     main()
     sys.exit(0)
