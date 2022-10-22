@@ -4,6 +4,8 @@ All dates are UK format.
 ## 22/10/22 4.0.3
 * Reinstate libvmkctl patch to allow vCenter to boot macOS VMs on ESXi host
 * Reinstate boot time load so the libvmkctl patch is loaded when hostd starts
+* Store ESXi version with patched files
+* `check` command compares current and stored ESXi versions
 
 ## 22/09/22 4.0.2
 Thanks to _lucaskamp_ and an _anonymous_ tester for testing.
