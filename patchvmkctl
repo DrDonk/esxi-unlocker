@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+# SPDX-FileCopyrightText: © 2011-2022 David Parsons & Sam Bingner
+# SPDX-License-Identifier: MIT
+
+import os
+import sys
+
+if sys.version_info < (3, 6):
+    sys.stderr.write("You need Python 3.6 or later\n")
+    sys.exit(1)
+
+
+def checkvmkctl(name):
+    # Patch file
+    f = open(name, "r+b")
+
+    # Read file into string variable
+    vmkctl = f.read()
+    applesmc = vmkctl.find(b'applesmc')
+
+    # Tidy up
+    f.close()
+    if applesmc != -1:
+        flag = True
+    else:
+        flag = False
+    print(f'Patch Status: {flag}')
+    return
+
+
+def patchvmkctl(name):
+    # Patch file
+    f = open(name, "r+b")
+
+    # Read file into string variable
+    vmkctl = f.read()
+    applesmc = vmkctl.find(b'applesmc')
+    f.seek(applesmc)
+    f.write(b'vmkernel')
+
+    # Tidy up
+    f.flush()
+    f.close()
+    print("smcPresent Patched")
+    return
+
+
+def print_usage():
+    print("Usage:")
+    print(f"{sys.argv[0]} patch|check <vmkctl filename>")
+    print("\nFirst option is command to perform:")
+    print(f"  patch - patch the vSMC table in vmx executable")
+    print(f"  check - check the vSMC table in vmx executable")
+    print(f"\nSecond option is the filename of executable:")
+    print(f"  <vmkctl filename> - the libvmkctl.so executable to patch")
+
+    sys.exit(1)
+
+
+def main():
+    # Function pointer
+    f = None
+
+    # Parse args and call command
+    if len(sys.argv) >= 3:
+        if sys.argv[1] == "check":
+            f = checkvmkctl
+        elif sys.argv[1] == "patch":
+            f = patchvmkctl
+        elif sys.argv[1] == "-h":
+            print_usage()
+        else:
+            print(f"Error: Incorrect command {sys.argv[1]} passed.")
+            print_usage()
+        filename = sys.argv[2]
+        if os.path.isfile(filename):
+            print(f"Filename: {filename}")
+            f(filename)
+        else:
+            print(f"Error: Cannot find file {filename}")
+            sys.exit(1)
+        return
+    else:
+        print_usage()
+        return
+
+
+if __name__ == "__main__":
+    print("PatchVMKCTL 4.0.3")
+    print("=================")
+    print("(c) 2014-2022 David Parsons")
+    print()
+    main()
+    sys.exit(0)
