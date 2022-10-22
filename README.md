@@ -15,6 +15,7 @@ This will likely impact Workstation Pro/Player as well. Currently the exact deta
 it is safe to say we should look for alternative approaches to the unlocker.
 ---
 
+
 ## 1. Introduction
 Unlocker 4 is designed for VMware ESXi 7.
 
