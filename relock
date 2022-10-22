@@ -7,13 +7,29 @@
 
 printf "VMware ESXi Unlocker 4.0.3\n"
 printf "==========================\n"
-printf "© 2011-2022 David Parsons\n"
+printf "(c) 2011-2022 David Parsons\n"
+
+# Ensure we only use unmodified commands
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+if [ $# -ne 0 ]; then
+  case "$1" in
+    -v)
+      printf "Verbose mode"
+      set -x
+      ;;
+    *)
+      printf "Invalid switch!"
+      exit 1
+      ;;
+  esac
+fi
+
 read -r -p "Reboot the ESXi server to uninstall unlocker (y/N)? " response
 case "$response" in
     [yY])
         printf "Rebooting the ESXi Server\n"
-        if [ -f "/bootbank/apple.vgz" ] then
-          BootModuleConfig.sh --verbose --remove=apple.vgz
+        if [ -f "/bootbank/apple.v00" ]; then
+          BootModuleConfig.sh --verbose --remove=apple.v00
         fi
         reboot
         ;;

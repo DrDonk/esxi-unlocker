@@ -6,7 +6,7 @@
 
 printf "VMware ESXi Unlocker 4.0.3\n"
 printf "==========================\n"
-printf "© 2011-2022 David Parsons\n"
+printf "(c) 2011-2022 David Parsons\n"
 printf "\nInstalling unlocker...\n"
 
 # Ensure we only use unmodified commands
@@ -45,7 +45,7 @@ cp $1 /bin/vmx ./tmp/bin
 cp $1 /bin/vmx-debug ./tmp/bin
 cp $1 /bin/vmx-stats ./tmp/bin
 mkdir -p ./tmp/lib64
-cp $1 /lib/64/libvmkctl.so ./tmp/lib64
+cp $1 /lib64/libvmkctl.so ./tmp/lib64
 
 # Do the unlocking stuff
 python ./patchsmc patch ./tmp/bin/vmx
@@ -84,15 +84,17 @@ read -r -p "Do you want to load SMC patches at boot (y/N)? " response
 case "$response" in
     [yY])
         printf "Adding to bootbank and rebooting the ESXi server\n"
-        BootModuleConfig.sh --add=apple.vgz
+        BootModuleConfig.sh --verbose --add=apple.v00
         reboot
         ;;
     *)
         # Load the new VTAR file
         printf "Loading Apple support...\n"
         /etc/init.d/hostd stop
+        sleep 5
         vmkramdisk apple.v00
         /etc/init.d/hostd start
+        sleep 5
 
         printf "Checking VMTAR loaded...\n"
         esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
@@ -104,4 +106,5 @@ case "$response" in
           printf "Failure apple.v00 not loaded\n"
         fi
         ;;
+esac
 exit 0
