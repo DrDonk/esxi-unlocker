@@ -24,13 +24,14 @@ if [ $# -ne 0 ]; then
   esac
 fi
 
+if [ -f "/bootbank/apple.v00" ]; then
+  BootModuleConfig.sh --verbose --remove=apple.v00
+fi
+
 read -r -p "Reboot the ESXi server to uninstall unlocker (y/N)? " response
 case "$response" in
     [yY])
         printf "Rebooting the ESXi Server\n"
-        if [ -f "/bootbank/apple.v00" ]; then
-          BootModuleConfig.sh --verbose --remove=apple.v00
-        fi
         reboot
         ;;
     *)
