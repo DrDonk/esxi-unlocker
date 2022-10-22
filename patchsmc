@@ -453,7 +453,7 @@ def main():
 
 
 if __name__ == '__main__':
-    print('PatchSMC 4.0.4')
+    print('PatchSMC 4.0.3')
     print('==============')
     print('© 2014-2022 David Parsons')
     print()
