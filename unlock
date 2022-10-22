@@ -46,6 +46,8 @@ cp $1 /bin/vmx-debug ./tmp/bin
 cp $1 /bin/vmx-stats ./tmp/bin
 mkdir -p ./tmp/lib64
 cp $1 /lib64/libvmkctl.so ./tmp/lib64
+mkdir -p ./tmp/etc
+vmware -v > ./tmp/etc/unlock.conf
 
 # Do the unlocking stuff
 python ./patchsmc patch ./tmp/bin/vmx
@@ -80,31 +82,17 @@ rm $1 -rf ./tmp
 rm $1 -f apple.tar
 rm $1 -f apple.vtar
 
-read -r -p "Do you want to load SMC patches at boot (y/N)? " response
+printf "Adding to bootbank...\n"
+BootModuleConfig.sh --verbose --add=apple.v00
+
+read -r -p "Reboot the ESXi server to install unlocker (y/N)? " response
 case "$response" in
     [yY])
-        printf "Adding to bootbank and rebooting the ESXi server\n"
-        BootModuleConfig.sh --verbose --add=apple.v00
+        printf "Rebooting the ESXi Server\n"
         reboot
         ;;
     *)
-        # Load the new VTAR file
-        printf "Loading Apple support...\n"
-        /etc/init.d/hostd stop
-        sleep 5
-        vmkramdisk apple.v00
-        /etc/init.d/hostd start
-        sleep 5
-
-        printf "Checking VMTAR loaded...\n"
-        esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
-
-        if [[ $? == 0 ]]
-        then
-          printf "Success apple.v00 loaded\n"
-        else
-          printf "Failure apple.v00 not loaded\n"
-        fi
+        printf "The SMC patches will not be loaded until the ESXi server has been rebooted\n"
         ;;
 esac
 exit 0
