@@ -31,3 +31,7 @@ then
 else
   printf "vmx not patched\n"
 fi
+
+printf "CHecking SMCpresent status...\n"
+vim-cmd hostsvc/hosthardware | grep smcPresent | cut -d ',' -f 1 | sed 's/^[ \t]*//'
+exit
