@@ -26,6 +26,7 @@ exposed in Fusion and ESXi when running on Apple hardware.
 The patch code carries out the following modifications dependent on the product being patched:
 
 * Patch vmx and derivatives to allow macOS to boot
+* Patch libvmkctl.so to allow vCenter to boot macOS guests
 
 It is important to understand that the Unlocker cannot add any new capabilities to VMware ESXi
 but enables support for macOS that is disabled in the VMware products when run on non-Apple hardware.
