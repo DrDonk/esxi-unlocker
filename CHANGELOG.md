@@ -1,6 +1,9 @@
 # Changes
 
 All dates are UK format.
+## 22/10/22 4.0.3
+* Reinstate libvmkctl patch to allow vCenter to boot mmacOS VMs on ESXi host
+* Reinstate boot time load so the libvmkctl patch is loaded when hostd starts
 
 ## 22/09/22 4.0.2
 Thanks to _lucaskamp_ and an _anonymous_ tester for testing.
