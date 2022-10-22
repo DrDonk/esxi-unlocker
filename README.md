@@ -1,3 +1,5 @@
+# macOS Unlocker V4 for VMware ESXi
+
 ---
 ## Important News
 
@@ -11,10 +13,7 @@ https://kb.vmware.com/s/article/88698
 
 This will likely impact Workstation Pro/Player as well. Currently the exact details of what may change are not clear, but
 it is safe to say we should look for alternative approaches to the unlocker.
-
 ---
-
-# macOS Unlocker V4 for VMware ESXi
 
 ## 1. Introduction
 Unlocker 4 is designed for VMware ESXi 7.
