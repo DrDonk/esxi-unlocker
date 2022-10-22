@@ -13,6 +13,17 @@ printf "\nChecking unlocker...\n"
 # Ensure we only use unmodified commands
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
+ESXI=$(vmware -v)
+printf "Current version of ESXi: $ESXI\n"
+
+PATCH=$(cat /etc/unlock.conf)
+printf "Patch built for ESXi: $PATCH\n"
+
+if [[ "$ESXI" != "$PATCH" ]]; then
+  printf "\x1B[41m\x1B[37m>>> ERROR: Mis-matched files please relock/unlock to update patches <<<\x1B[0m\n"
+  exit 1
+fi
+
 printf "Checking VMTAR loaded...\n"
 esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
 
@@ -32,6 +43,6 @@ else
   printf "vmx not patched\n"
 fi
 
-printf "CHecking SMCpresent status...\n"
+printf "Checking smcPresent status...\n"
 vim-cmd hostsvc/hosthardware | grep smcPresent | cut -d ',' -f 1 | sed 's/^[ \t]*//'
 exit
