@@ -14,7 +14,7 @@ if sys.version_info < (3, 6):
 
 def checkvmkctl(name):
     # Patch file
-    f = open(name, "r+b")
+    f = open(name, "rb")
 
     # Read file into string variable
     vmkctl = f.read()
@@ -22,7 +22,8 @@ def checkvmkctl(name):
 
     # Tidy up
     f.close()
-    if applesmc != -1:
+
+    if applesmc == -1:
         flag = True
     else:
         flag = False
