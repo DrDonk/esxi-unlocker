@@ -80,18 +80,28 @@ rm $1 -rf ./tmp
 rm $1 -f apple.tar
 rm $1 -f apple.vtar
 
-# Load the new VTAR file
-printf "Loading Apple support...\n"
-/etc/init.d/hostd stop
-vmkramdisk apple.v00
-/etc/init.d/hostd start
+read -r -p "Do you want to load SMC patches at boot (y/N)? " response
+case "$response" in
+    [yY])
+        printf "Adding to bootbank and rebooting the ESXi server\n"
+        BootModuleConfig.sh --add=apple.vgz
+        reboot
+        ;;
+    *)
+        # Load the new VTAR file
+        printf "Loading Apple support...\n"
+        /etc/init.d/hostd stop
+        vmkramdisk apple.v00
+        /etc/init.d/hostd start
 
-printf "Checking VMTAR loaded...\n"
-esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
+        printf "Checking VMTAR loaded...\n"
+        esxcli system visorfs tardisk list | grep apple.v00 >/dev/null
 
-if [[ $? == 0 ]]
-then
-  printf "Success apple.v00 loaded\n"
-else
-  printf "Failure apple.v00 not loaded\n"
-fi
+        if [[ $? == 0 ]]
+        then
+          printf "Success apple.v00 loaded\n"
+        else
+          printf "Failure apple.v00 not loaded\n"
+        fi
+        ;;
+exit 0

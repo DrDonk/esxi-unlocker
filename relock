@@ -12,6 +12,9 @@ read -r -p "Reboot the ESXi server to uninstall unlocker (y/N)? " response
 case "$response" in
     [yY])
         printf "Rebooting the ESXi Server\n"
+        if [ -f "/bootbank/apple.vgz" ] then
+          BootModuleConfig.sh --verbose --remove=apple.vgz
+        fi
         reboot
         ;;
     *)
