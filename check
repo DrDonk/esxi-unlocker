@@ -16,6 +16,11 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 ESXI=$(vmware -v)
 printf "Current version of ESXi: $ESXI\n"
 
+if [ ! -f "$FILE" ]; then
+    printf "System has not been patched\n"
+    exit 1
+fi
+
 PATCH=$(cat /etc/unlock.conf)
 printf "Patch built for ESXi: $PATCH\n"
 
