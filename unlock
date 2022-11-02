@@ -24,6 +24,15 @@ if [ $# -ne 0 ]; then
   esac
 fi
 
+# Check space require 400MB to be sure can patch
+REQUIRED=400
+FREE=$(df -m . | tail -1 | awk '{print $4}')
+printf "$REQUIRED $FREE\n"
+if [ "$FREE" -lt "$REQUIRED" ]; then
+    printf "\x1B[41m\x1B[37m>>> ERROR: Not enough free space to patch ESXi: free $FREE MB required $REQUIRED MB <<<\x1B[0m\n"
+    exit 1
+fi
+
 # Absolute path to this script
 SCRIPT=$(readlink -f "$0")
 #echo "$SCRIPT"
