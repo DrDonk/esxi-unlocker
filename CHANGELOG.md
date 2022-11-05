@@ -2,9 +2,10 @@
 
 All dates are UK format.
 
-## xx/11/22 4.0.4
+## 05/11/22 4.0.4
 * check command correctly reports if system not patched
 * unlock checks for free disk space before patching
+* fixed error if libvmkctl.so already patched
 
 ## 22/10/22 4.0.3
 * Reinstate libvmkctl patch to allow vCenter to boot macOS VMs on ESXi host
