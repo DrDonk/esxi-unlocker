@@ -27,9 +27,16 @@ fi
 # Check space require 400MB to be sure can patch
 REQUIRED=400
 FREE=$(df -m . | tail -1 | awk '{print $4}')
-printf "$REQUIRED $FREE\n"
+
 if [ "$FREE" -lt "$REQUIRED" ]; then
     printf "\x1B[41m\x1B[37m>>> ERROR: Not enough free space to patch ESXi: free $FREE MB required $REQUIRED MB <<<\x1B[0m\n"
+    exit 1
+fi
+
+# Check for earlier v3 install
+if [ -f "/bootbank/unlocker.tgz" ]; then
+    printf "\x1B[41m\x1B[37m>>> ERROR: Version 3 of ESXi Unlocker is installed and must be uninstalled <<<\x1B[0m\n"
+    printf "Run this command:\nBootModuleConfig.sh --verbose --remove=unlocker.tgz\nAnd reboot the ESXi server\n"
     exit 1
 fi
 
