@@ -3,8 +3,9 @@
 All dates are UK format.
 
 ## 05/11/22 4.0.4
-* check command correctly reports if system not patched
-* unlock checks for free disk space before patching
+* `check` command correctly reports if system not patched
+* `unlock` command checks for free disk space before patching
+* `unlock`  command checks for previous V3 installation before patching
 * fixed error if libvmkctl.so already patched
 
 ## 22/10/22 4.0.3
