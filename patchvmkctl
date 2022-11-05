@@ -28,10 +28,14 @@ def checkvmkctl(name):
     else:
         flag = False
     print(f'Patch Status: {flag}')
-    return
+    return flag
 
 
 def patchvmkctl(name):
+    if checkvmkctl(name):
+        print(f'File is already patched')
+        return
+
     # Patch file
     f = open(name, "r+b")
 
