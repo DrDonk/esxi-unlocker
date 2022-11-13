@@ -325,7 +325,7 @@ def dumpkeys(vmx, offset, count):
         smc_data = getdata(vmx, offset, smc_key)
 
         # Dump entry
-        printkey2(offset, smc_key, smc_data)
+        printkey(offset, smc_key, smc_data)
         offset = offset + ROW_LENGTH
 
     return
@@ -453,7 +453,7 @@ def main():
 
 
 if __name__ == '__main__':
-    print('PatchSMC 4.0.3')
+    print('PatchSMC 4.0.4')
     print('==============')
     print('(c) 2014-2022 David Parsons')
     print()
