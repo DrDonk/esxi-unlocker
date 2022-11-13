@@ -348,10 +348,10 @@ def dumpsmc(name):
         del vmx_bytes
 
         # Dump first vSMC table
-        # print('\nappleSMCTableV0 (smc.version = "0")')
-        # hdr = gethdr(vmx, smc0_header)
-        # printhdr(smc0_header, hdr)
-        # dumpkeys(vmx, smc0_key, hdr[1])
+        print('\nappleSMCTableV0 (smc.version = "0")')
+        hdr = gethdr(vmx, smc0_header)
+        printhdr(smc0_header, hdr)
+        dumpkeys(vmx, smc0_key, hdr[1])
 
         # Dump second vSMC table
         print('\nappleSMCTableV1 (smc.version = "1")')
