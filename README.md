@@ -1,20 +1,9 @@
-# macOS Unlocker V4 for VMware ESXi
-
----
-## macOS Ventura Guests
-There is a known issue that Ventura guests boot loop in VMware ESXi and Workstation. Currently there is no workaround but investigations are still underway to see
-how it may be fixed.
-
-https://github.com/DrDonk/unlocker/issues/47
-
-Please do not upgrade to Ventura at this time.
-
+# IMPORTANT PLEASE READ
 ---
 
----
-## Important News
-
-VMware will stop supporting new macOS versions as guests starting with Fusion 13 and the next version of ESXi.
+## DO NOT UPGRADE TO ESXi 8
+There is an issue with ESXi 8 which stops macOS from booting and is probably related to the news that VMware nolonger support macOS as host and guest 
+for ESXi8. 
 
 This is documented at the VMware KB for Fusion:
 https://kb.vmware.com/s/article/88697
@@ -22,10 +11,17 @@ https://kb.vmware.com/s/article/88697
 And for ESXi:
 https://kb.vmware.com/s/article/88698
 
-This will likely impact Workstation Pro/Player as well. Currently the exact details of what may change are not clear, but
-it is safe to say we should look for alternative approaches to the unlocker.
 
----
+## DO NOT UPGRADE VMS TO VENTURA
+There is a known issue that Ventura guests boot loop in VMware ESXi and Workstation. Currently there is no workaround but investigations are still underway to see how it may be fixed.
+
+https://github.com/DrDonk/unlocker/issues/47
+
+Please do not upgrade to Ventura at this time.
+
+--- 
+
+# macOS Unlocker V4 for VMware ESXi
 
 ## 1. Introduction
 Unlocker 4 is designed for VMware ESXi 7.
