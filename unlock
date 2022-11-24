@@ -40,6 +40,12 @@ if [ -f "/bootbank/unlocker.tgz" ]; then
     exit 1
 fi
 
+
+# TODO: Check not in UEFI Secure Mode
+# TODO: Check on VMs are running
+# TODO: Maintenance mode
+
+
 # Absolute path to this script
 SCRIPT=$(readlink -f "$0")
 #echo "$SCRIPT"
