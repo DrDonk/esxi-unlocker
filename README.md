@@ -1,9 +1,24 @@
 # IMPORTANT PLEASE READ
----
 
-## DO NOT UPGRADE TO ESXi 8
-There is an issue with ESXi 8 which stops macOS from booting and is probably related to the news that VMware nolonger support macOS as host and guest 
-for ESXi8. 
+---
+## macOS Ventura Guests
+There are a known issues that Ventura guests boot loop in VMware Workstation. The situation after extensive testing is:
+
+1. Intel pre-Haswell CPUs dropped by Apple in Ventura - no way to patch need to look at OCLP
+2. AMD CPUs n o longer work in Ventura possibly due to how CPUID leaf 4 is read - no way to patch need to look at OpenCore and other solutions
+3. Intel Haswell+ CPUS, which are supported, make sure you set 
+
+`ethernet0.virtualDev = "e1000e`
+
+to
+
+`ethernet0.virtualDev = "vmxnet3"`
+
+https://github.com/DrDonk/unlocker/issues/47
+
+Please do not upgrade to Ventura at this time if you have AMD or Intel pre-Haswell CPUs.
+
+VMware will stop supporting new macOS versions as guests starting with Fusion 13 and the next version of ESXi.
 
 This is documented at the VMware KB for Fusion:
 https://kb.vmware.com/s/article/88697
@@ -11,13 +26,12 @@ https://kb.vmware.com/s/article/88697
 And for ESXi:
 https://kb.vmware.com/s/article/88698
 
+This will likely impact Workstation Pro/Player as well. Currently the exact details of what may change are not clear, but
+it is safe to say we should look for alternative approaches to the unlocker.
 
-## DO NOT UPGRADE VMS TO VENTURA
-There is a known issue that Ventura guests boot loop in VMware ESXi and Workstation. Currently there is no workaround but investigations are still underway to see how it may be fixed.
-
-https://github.com/DrDonk/unlocker/issues/47
-
-Please do not upgrade to Ventura at this time.
+## Upgrading ESXi 8
+There is an issue with ESXi 8 which stops macOS from booting and is probably related to the news that VMware nolonger support macOS as host and guest 
+for ESXi8. The workaround is to keep existing VMs as 7U2 variants and create new ones as ESXi 7 U2 VMs. This can be done in the dialogs when creating a new VM.
 
 --- 
 
