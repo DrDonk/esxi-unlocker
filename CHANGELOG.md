@@ -2,13 +2,18 @@
 
 All dates are UK format.
 
-## 05/11/22 4.0.4
+## xx/01/23 4.0.4
+_drdonk:_
 * `check` command correctly reports if system not patched
 * `unlock` command checks for free disk space before patching
 * `unlock`  command checks for previous V3 installation before patching
-* fixed error if libvmkctl.so already patched
+* Fixed error if libvmkctl.so already patched
+* Removed an unused unlocker flag (KPPW/KPST) to match Go version
+* Update all copyright dates to 2023
+* Make sure the files to be patched have write permissions before patching
 
 ## 22/10/22 4.0.3
+_drdonk:_
 * Reinstate libvmkctl patch to allow vCenter to boot macOS VMs on ESXi host
 * Reinstate boot time load so the libvmkctl patch is loaded when hostd starts
 * Store ESXi version with patched files
