@@ -54,16 +54,10 @@ KEY_KEY = b'YEK#'
 LKS_KEY = b'SKL+'
 OSK0_KEY = b'0KSO'
 OSK1_KEY = b'1KSO'
-KPST_KEY = b'TSPK'
-KPPW_KEY = b'WPPK'
 
 # Haiku
 OSK0 = codecs.encode('bheuneqjbexolgurfrjbeqfthneqrqcy', 'rot_13').encode('UTF-8')
 OSK1 = codecs.encode('rnfrqbagfgrny(p)NccyrPbzchgreVap', 'rot_13').encode('UTF-8')
-
-# Hogwarts
-KPPW = codecs.encode('FcrpvnyvfEriryvb', 'rot_13').encode('UTF-8')
-KPST = b'\x01'
 
 
 # ELF Magic
@@ -142,46 +136,6 @@ def setdata(vmx, offset, smc_data):
     return
 
 
-def patchkppw(vmx, offset, data):
-    # Get the KPPW key and data
-    smc_key = getkey(vmx, offset)
-    smc_data = getdata(vmx, offset, smc_key)
-    key = smc_key[0][::-1].decode('UTF-8')
-    print(f'{key} Key Before:')
-    printkey(offset, smc_key, smc_data)
-
-    # Set the data value
-    setdata(vmx, offset, data)
-
-    # Get patched KPPW key and data
-    smc_key = getkey(vmx, offset)
-    smc_data = getdata(vmx, offset, smc_key)
-    print(f'{key} Key After:')
-    printkey(offset, smc_key, smc_data)
-
-    return
-
-
-def patchkpst(vmx, offset, data):
-    # Get the KPST key and data
-    smc_key = getkey(vmx, offset)
-    smc_data = getdata(vmx, offset, smc_key)
-    key = smc_key[0][::-1].decode('UTF-8')
-    print(f'{key} Key Before:')
-    printkey(offset, smc_key, smc_data)
-
-    # Set the data value
-    setdata(vmx, offset, data)
-
-    # Get patched KPST key and data
-    smc_key = getkey(vmx, offset)
-    smc_data = getdata(vmx, offset, smc_key)
-    print(f'{key} Key After:')
-    printkey(offset, smc_key, smc_data)
-
-    return
-
-
 def patchosk(vmx, offset, ptr, data):
     # Get the OSK key and data
     smc_key = getkey(vmx, offset)
@@ -234,19 +188,11 @@ def patchsmc(name):
         smc0_osk1 = vmx_bytes.find(OSK1_KEY, smc0_key)
         smc1_osk1 = vmx_bytes.find(OSK1_KEY, smc1_key)
 
-        # Find 'KPST' key
-        smc1_kpst = vmx_bytes.find(KPST_KEY, smc1_key)
-
-        # Find 'KPPW' key
-        smc1_kppw = vmx_bytes.find(KPPW_KEY, smc1_key)
-
         # Check to see if we have already patched the vSMC in the file
         osk0 = getdata(vmx, smc1_osk0, getkey(vmx, smc1_osk0))
         osk1 = getdata(vmx, smc1_osk1, getkey(vmx, smc1_osk1))
-        kppw = getdata(vmx, smc1_kppw, getkey(vmx, smc1_kppw))
-        kpst = getdata(vmx, smc1_kpst, getkey(vmx, smc1_kpst))
 
-        if osk0 == OSK0 and osk1 == OSK1 and kppw == KPPW and kpst == KPST:
+        if osk0 == OSK0 and osk1 == OSK1:
             print(f'File {name} is already patched')
             return
 
@@ -279,12 +225,6 @@ def patchsmc(name):
 
         # Patch OSK1 key & get the output for ELF patching
         smc_osk_ptr = patchosk(vmx, smc1_osk1, smc_default_ptr, OSK1)
-
-        # Patch KPST key as a marker
-        patchkpst(vmx, smc1_kpst, KPST)
-
-        # Patch KPPW key as a marker
-        patchkppw(vmx, smc1_kppw, KPPW)
 
         # Patch relocation records if ELF executable
         vmx.seek(0)
@@ -379,24 +319,14 @@ def checksmc(name):
         # Find 'OSK1' keys
         smc1_osk1 = vmx_bytes.find(OSK1_KEY, smc1_key)
 
-        # Find 'KPST' key
-        smc1_kpst = vmx_bytes.find(KPST_KEY, smc1_key)
-
-        # Find 'KPPW' key
-        smc1_kppw = vmx_bytes.find(KPPW_KEY, smc1_key)
-
         # Free bytes from mem
         del vmx_bytes
 
         # Check to see if we have already patched the vSMC in the file
         osk0 = getdata(vmx, smc1_osk0, getkey(vmx, smc1_osk0))
         osk1 = getdata(vmx, smc1_osk1, getkey(vmx, smc1_osk1))
-        kppw = getdata(vmx, smc1_kppw, getkey(vmx, smc1_kppw))
-        kpst = getdata(vmx, smc1_kpst, getkey(vmx, smc1_kpst))
 
-        # print(f'{OSK0} {OSK1} {KPST} {KPPW}')
-        # print(f'{osk0} {osk1} {kpst} {kppw}')
-        if osk0 == OSK0 and osk1 == OSK1 and kppw == KPPW and kpst == KPST:
+        if osk0 == OSK0 and osk1 == OSK1:
             flag = True
         else:
             flag = False
