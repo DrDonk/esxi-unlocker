@@ -68,6 +68,13 @@ cp $1 /bin/vmx-debug ./tmp/bin
 cp $1 /bin/vmx-stats ./tmp/bin
 mkdir -p ./tmp/lib64
 cp $1 /lib64/libvmkctl.so ./tmp/lib64
+
+# Ensure vmx files are 4755/-rwsr-xr-x
+chmod 4555 ./tmp/bin/*
+
+# Ensure lib files are 755/-rwxr-xr-x
+chmod 555 ./tmp/lib64/*
+
 mkdir -p ./tmp/etc
 vmware -v > ./tmp/etc/unlock.conf
 
