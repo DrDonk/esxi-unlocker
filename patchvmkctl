@@ -93,7 +93,7 @@ def main():
 
 
 if __name__ == "__main__":
-    print("PatchVMKCTL 4.0.3")
+    print("PatchVMKCTL 4.0.4")
     print("=================")
     print("(c) 2014-2022 David Parsons")
     print()

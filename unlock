@@ -4,7 +4,7 @@
 
 #set -e
 
-printf "VMware ESXi Unlocker 4.0.3\n"
+printf "VMware ESXi Unlocker 4.0.4\n"
 printf "==========================\n"
 printf "(c) 2011-2022 David Parsons\n"
 printf "\nInstalling unlocker...\n"
