@@ -10,7 +10,8 @@ _drdonk:_
 * Fixed error if libvmkctl.so already patched
 * Removed an unused unlocker flag (KPPW/KPST) to match Go version
 * Update all copyright dates to 2023
-* Make sure the files to be patched have write permissions before patching
+* Make sure the files to be patched have write permissions before patching as NFS datastores correctly enforce 
+R/W permissions but VMFS3 does not and can patch with read only flag set.
 
 ## 22/10/22 4.0.3
 _drdonk:_
