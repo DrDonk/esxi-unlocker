@@ -383,7 +383,7 @@ def main():
 
 
 if __name__ == '__main__':
-    print('PatchSMC 4.0.4')
+    print('PatchSMC 4.0.5')
     print('==============')
     print('(c) 2014-2023 David Parsons')
     print()

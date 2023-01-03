@@ -5,7 +5,7 @@
 #set -e
 #set -x
 
-printf "VMware ESXi Unlocker 4.0.4\n"
+printf "VMware ESXi Unlocker 4.0.5\n"
 printf "==========================\n"
 printf "(c) 2011-2023 David Parsons\n"
 
