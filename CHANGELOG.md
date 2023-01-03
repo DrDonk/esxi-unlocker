@@ -2,7 +2,7 @@
 
 All dates are UK format.
 
-## xx/01/23 4.0.4
+## 03/01/23 4.0.4
 _drdonk:_
 * `check` command correctly reports if system not patched
 * `unlock` command checks for free disk space before patching
