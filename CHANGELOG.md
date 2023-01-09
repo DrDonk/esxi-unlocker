@@ -1,9 +1,10 @@
 # Changes
 
-All dates are UK format.
+All dates are UK DD/MM/YY format.
 
-## xx/xx/23 4.0.5
+## 09/01/23 4.0.5
 _drdonk:_
+* Fixed permissions error correctly this time!
 
 ## 03/01/23 4.0.4
 _drdonk:_
