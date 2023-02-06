@@ -1,12 +1,10 @@
 #!/bin/sh
-# SPDX-FileCopyrightText: © 2011-2023 David Parsons
 # SPDX-License-Identifier: MIT
 
 #set -e
 
 printf "VMware ESXi Unlocker 4.0.5\n"
 printf "==========================\n"
-printf "(c) 2011-2023 David Parsons\n"
 printf "\nInstalling unlocker...\n"
 
 # Ensure we only use unmodified commands

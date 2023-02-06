@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-# SPDX-FileCopyrightText: © 2011-2023 David Parsons & Sam Bingner
 # SPDX-License-Identifier: MIT
 
 import os
@@ -95,7 +94,6 @@ def main():
 if __name__ == "__main__":
     print("PatchVMKCTL 4.0.5")
     print("=================")
-    print("(c) 2014-2023 David Parsons")
     print()
     main()
     sys.exit(0)
