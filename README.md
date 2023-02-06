@@ -1,3 +1,9 @@
+# HELP WANTED: 
+# I am going to be retiring from the macOS VM work and I am looking for someone who would be willing to maintain the code. Please see this issue:
+
+
+https://github.com/DrDonk/unlocker/issues/85
+
 # IMPORTANT PLEASE READ
 
 ---
