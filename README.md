@@ -1,47 +1,8 @@
-# HELP WANTED: 
-# I am going to be retiring from the macOS VM work and I am looking for someone who would be willing to maintain the code. Please see this issue:
-
-
-https://github.com/DrDonk/unlocker/issues/85
-
-# IMPORTANT PLEASE READ
-
----
-## macOS Ventura Guests
-There are a known issues that Ventura guests boot loop in VMware Workstation. The situation after extensive testing is:
-
-1. Intel pre-Haswell CPUs dropped by Apple in Ventura - no way to patch need to look at OCLP
-2. AMD CPUs n o longer work in Ventura possibly due to how CPUID leaf 4 is read - no way to patch need to look at OpenCore and other solutions
-3. Intel Haswell+ CPUS, which are supported, make sure you set 
-
-`ethernet0.virtualDev = "e1000e`
-
-to
-
-`ethernet0.virtualDev = "vmxnet3"`
-
-https://github.com/DrDonk/unlocker/issues/47
-
-Please do not upgrade to Ventura at this time if you have AMD or Intel pre-Haswell CPUs.
-
-VMware will stop supporting new macOS versions as guests starting with Fusion 13 and the next version of ESXi.
-
-This is documented at the VMware KB for Fusion:
-https://kb.vmware.com/s/article/88697
-
-And for ESXi:
-https://kb.vmware.com/s/article/88698
-
-This will likely impact Workstation Pro/Player as well. Currently the exact details of what may change are not clear, but
-it is safe to say we should look for alternative approaches to the unlocker.
-
-## Upgrading ESXi 8
-There is an issue with ESXi 8 which stops macOS from booting and is probably related to the news that VMware nolonger support macOS as host and guest 
-for ESXi8. The workaround is to keep existing VMs as 7U2 variants and create new ones as ESXi 7 U2 VMs. This can be done in the dialogs when creating a new VM.
-
---- 
-
 # macOS Unlocker V4 for VMware ESXi
+
+## Unlocker 2007-2023
+## This project is now archived as I no longer use VMware and not in a position to provide future development and support. 
+
 
 ## 1. Introduction
 Unlocker 4 is designed for VMware ESXi 7.
@@ -94,12 +55,11 @@ support console and running:
 and then rebooting the ESXi server.
 
 ### 3.2 AMD CPUs
-A patched macOS AMD kernel must be used to run on older AMD systems, but there is a workaround if you have a modern
-AMD Ryzen CPU. The unlocker cannot patch this but we can recommend settings for the VMX file that allows macOS to
-run on recent AMD CPUs. The tests are being recorded in this issue, and it would be useful if more can report
-success or failures in that issue.
+The ESXi Unlocker does not add support for AMD CPUs, that has to be done via settings for the macOS guest runnning on 
+a modern AMD CPU. These settings may allow macOS to run based on tests reported back to the project, but there is no 
+formal support for AMD CPUs with the unlocker.
 
-https://github.com/DrDonk/unlocker/issues/33
+A patched macOS AMD kernel or OpenCore must be used to run on older AMD systems.
 
 1. Read this KB article to learn how to edit a guest's VMX file safely https://kb.vmware.com/s/article/2057902
 2. Add the following lines were to the VMX file:

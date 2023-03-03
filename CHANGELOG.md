@@ -2,6 +2,13 @@
 
 All dates are UK DD/MM/YY format.
 
+## 03/03/23 4.0.6
+### This is the last release of ESXi Unlocker.
+
+_drdonk:_
+* Tidy up of code
+* Add explanantion that the unlocker cannot add AMD support but some settings in VMX file may work
+
 ## 09/01/23 4.0.5
 _drdonk:_
 * Fixed permissions error correctly this time!

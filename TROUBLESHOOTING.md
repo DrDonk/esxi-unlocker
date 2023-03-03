@@ -55,12 +55,11 @@ where width and height are the pixel size you want. For example to get 1440x900:
 `sudo /Library/Application Support/VMware Tools/vmware-resolutionSet 1440 900`
 
 ## AMD CPUs
-A patched macOS AMD kernel must be used to run on older AMD systems, but there is a workaround if you have a modern
-AMD Ryzen CPU. The unlocker cannot patch this but we can recommend settings for the VMX file that allows macOS to
-run on recent AMD CPUs. The tests are being recorded in this issue, and it would be useful if more can report
-success or failures in that issue.
+The ESXi Unlocker does not add support for AMD CPUs, that has to be done via settings for the macOS guest runnning on 
+a modern AMD CPU. These settings may allow macOS to run based on tests reported back to the project, but there is no 
+formal support for AMD CPUs with the unlocker.
 
-https://github.com/DrDonk/unlocker/issues/33
+A patched macOS AMD kernel or OpenCore must be used to run on older AMD systems.
 
 1. Read this KB article to learn how to edit a guest's VMX file safely https://kb.vmware.com/s/article/2057902
 2. Add the following lines were to the VMX file:
@@ -75,6 +74,7 @@ cpuid.1.ecx = "1000:0010:1001:1000:0010:0010:0000:0011"
 cpuid.1.edx = "0000:0111:1000:1011:1111:1011:1111:1111"
 vhv.enable = "FALSE"
 vpmc.enable = "FALSE"
+vvtd.enable = "FALSE"
 ```
 3. Make sure there are no duplicate lines in the VMX file or the guest will not start and a dictionary error will
    be displayed by VMware.
